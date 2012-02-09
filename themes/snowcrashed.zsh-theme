@@ -1,20 +1,46 @@
-# https://github.com/blinks zsh theme
+autoload -Uz vcs_info
+autoload -U colors && colors
+autoload -U add-zsh-hook
+add-zsh-hook precmd theme_precmd
 
-function _prompt_char() {
-  if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
-    echo "%{%F{blue}%}±%{%f%k%b%}"
-  else
-    echo ' '
-  fi
+theme_precmd () {
+    typeset scmName="" 
+
+    vcs_info
+
+    scmName="${vcs_info_msg_0_}" 
+    case $scmName in
+    	"bzr")
+            scmChar="%F{blue}β%f" 
+            ;;
+    	"git")
+            scmChar="%F{blue}±%f" 
+            ;;
+        "hg")
+            scmChar="%F{blue}∂%f" 
+            ;;
+        "svn")
+            scmChar="%F{blue}∫%f" 
+            ;;
+        *)
+            scmChar=" %f" 
+            ;;
+    esac
 }
 
-ZSH_THEME_GIT_PROMPT_PREFIX=" [%{%B%F{blue}%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{%f%k%b%K{black}%B%F{green}%}]"
-ZSH_THEME_GIT_PROMPT_DIRTY=" %{%F{red}%}*%{%f%k%b%}"
-ZSH_THEME_GIT_PROMPT_CLEAN=""
+
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' unstagedstr '%F{red}●'   # display this when there are unstaged changes
+zstyle ':vcs_info:*' stagedstr '%F{green}●'  # display this when there are staged changes
+zstyle ':vcs_info:*' actionformats '%s' '%u%c' '%f[ %F{red}%s%f: %b|%a ]' '%i'
+zstyle ':vcs_info:*' formats '%s' '%u%c' '%f[ %F{red}%s%f: %b ]' '%i'
+zstyle ':vcs_info:*' branchformat '%b:%r'
+zstyle ':vcs_info:*' enable bzr git hg svn
+zstyle ':vcs_info:*' max-exports 4
 
 PROMPT='%{%f%k%b%}
-%{%K{black}%B%F{green}%}%n%{%B%F{blue}%}@%{%B%F{cyan}%}%m%{%B%F{green}%} %{%b%F{yellow}%K{black}%}%~%{%B%F{green}%}$(git_prompt_info)%E%{%f%k%b%}
-%{%K{black}%}$(_prompt_char)%{%K{black}%} %#%{%f%k%b%} '
+%{%K{black}%B%F{green}%}%n%{%B%F{blue}%}@%{%B%F{cyan}%}%m%{%B%F{green}%} %{%b%F{yellow}%K{black}%}%~%{%B%F{green}%} ${vcs_info_msg_2_}%E%{%f%k%b%}
+%{%K{black}%}$scmChar%{%K{black}%} %#%{%f%k%b%} '
 
-RPROMPT='!%{%B%F{cyan}%}%!%{%f%k%b%}'
+RPROMPT='${vcs_info_msg_1_}'
+
