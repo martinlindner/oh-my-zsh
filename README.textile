@@ -1,4 +1,4 @@
-This is just a fork containing some customizations to robbyrussel's incredible oh-my-zshell:https://github.com/robbyrussell/oh-my-zsh project.
+This is just a fork containing some customizations to robbyrussel's incredible "oh-my-zshell":https://github.com/robbyrussell/oh-my-zsh project.
 
 h3. The automatic installer...
 
